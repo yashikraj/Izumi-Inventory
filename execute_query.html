@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Execute SQL Query</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-2xl font-bold mb-6">Execute SQL Query</h1>
+        
+        <div class="bg-gray-800 p-6 rounded-lg">
+            <h2 class="text-xl mb-4">Pending SQL Query:</h2>
+            <pre id="sqlQuery" class="bg-gray-700 p-4 rounded-lg overflow-auto max-h-60 mb-6"></pre>
+            
+            <div class="flex justify-between">
+                <button id="copyBtn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg">Copy to Clipboard</button>
+                <button id="clearBtn" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg">Clear Query</button>
+            </div>
+            
+            <div class="mt-6">
+                <p class="mb-4">Instructions:</p>
+                <ol class="list-decimal pl-6 space-y-2">
+                    <li>Copy the SQL query above</li>
+                    <li>Open phpMyAdmin or MySQL command line</li>
+                    <li>Paste and execute the query to add the product to the database</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sqlQuery = localStorage.getItem('pendingQuery') || 'No pending SQL query';
+            document.getElementById('sqlQuery').textContent = sqlQuery;
+            
+            document.getElementById('copyBtn').addEventListener('click', function() {
+                navigator.clipboard.writeText(sqlQuery).then(function() {
+                    alert('SQL query copied to clipboard!');
+                });
+            });
+            
+            document.getElementById('clearBtn').addEventListener('click', function() {
+                localStorage.removeItem('pendingQuery');
+                document.getElementById('sqlQuery').textContent = 'No pending SQL query';
+            });
+        });
+    </script>
+</body>
+</html>

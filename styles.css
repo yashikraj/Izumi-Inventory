@@ -1,0 +1,17 @@
+.backdrop-blur-lg {
+    backdrop-filter: blur(16px);
+}
+
+#particles-js {
+    background: linear-gradient(135deg, #1a1f35 0%, #283593 100%);
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+}
+
+.shake {
+    animation: shake 0.5s ease-in-out;
+}

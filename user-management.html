@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - Izumi Inventory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Top Navigation -->
+    <nav class="fixed top-0 w-full bg-gray-800 border-b border-gray-700 z-50">
+        <div class="max-w-full mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-xl font-bold">Izumi Inventory</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-700">🌙</button>
+                    <span class="text-gray-300">Welcome, Admin</span>
+                    <a href="index.html" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Layout -->
+    <div class="flex h-screen pt-16">
+        <!-- Sidebar -->
+        <aside class="w-64 fixed h-full bg-gray-800 border-r border-gray-700">
+            <nav class="mt-5 px-2">
+                <!-- Sidebar items -->
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="ml-64 flex-1 p-8">
+            <div class="max-w-full mx-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">User Management</h2>
+                    <button onclick="showCreateUserModal()" 
+                        class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
+                        + Create New User
+                    </button>
+                </div>
+
+                <!-- Filters -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <div class="col-span-2">
+                        <input type="text" placeholder="Search users by name or email..." 
+                            class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <select class="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500">
+                            <option value="">All Roles</option>
+                            <option value="admin">Admin</option>
+                            <option value="user">User</option>
+                        </select>
+                        <select class="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-700">
+                            <thead class="bg-gray-900">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">User ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">Name</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">Email</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">Role</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">Last Active</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">Status</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-gray-800 divide-y divide-gray-700">
+                                <!-- Sample row with highlight for new user -->
+                                <tr class="hover:bg-gray-700 transition-colors bg-blue-900/20">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">U001</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">John Doe</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">john@example.com</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-900 text-blue-400">Admin</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">2024-01-20 15:30</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-900 text-green-400">Active</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm space-x-2">
+                                        <button class="text-yellow-400 hover:text-yellow-300" onclick="confirmDemote('U001')">Demote</button>
+                                        <button class="text-red-400 hover:text-red-300" onclick="confirmDeactivate('U001')">Deactivate</button>
+                                        <button class="text-red-400 hover:text-red-300" onclick="confirmDelete('U001')">Delete</button>
+                                    </td>
+                                </tr>
+                                <!-- Regular row -->
+                                <tr class="hover:bg-gray-700 transition-colors">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">U002</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">Jane Smith</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">jane@example.com</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 py-1 text-xs font-medium rounded-full bg-gray-700 text-gray-400">User</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">2024-01-20 14:15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-900 text-green-400">Active</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm space-x-2">
+                                        <button class="text-blue-400 hover:text-blue-300" onclick="confirmPromote('U002')">Promote</button>
+                                        <button class="text-red-400 hover:text-red-300" onclick="confirmDeactivate('U002')">Deactivate</button>
+                                        <button class="text-red-400 hover:text-red-300" onclick="confirmDelete('U002')">Delete</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="bg-gray-900 px-6 py-4 border-t border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-gray-400">
+                                Showing <span class="font-medium">1</span> to <span class="font-medium">10</span> of <span class="font-medium">20</span> users
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="px-3 py-1 rounded bg-gray-700 text-gray-300 hover:bg-gray-600">Previous</button>
+                                <button class="px-3 py-1 rounded bg-blue-600 text-white">1</button>
+                                <button class="px-3 py-1 rounded bg-gray-700 text-gray-300 hover:bg-gray-600">2</button>
+                                <button class="px-3 py-1 rounded bg-gray-700 text-gray-300 hover:bg-gray-600">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create User Modal -->
+    <div id="createUserModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-gray-800 rounded-xl p-6 w-full max-w-md">
+            <h3 class="text-xl font-bold mb-4">Create New User</h3>
+            <form id="createUserForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2">Name</label>
+                    <input type="text" required 
+                        class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2">Email</label>
+                    <input type="email" required 
+                        class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2">Password</label>
+                    <input type="password" required 
+                        class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2">Role</label>
+                    <select class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white">
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div class="flex space-x-4 mt-6">
+                    <button type="submit" 
+                        class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg">
+                        Create User
+                    </button>
+                    <button type="button" onclick="hideCreateUserModal()" 
+                        class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-lg">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-gray-800 rounded-xl p-6 w-full max-w-sm">
+            <h3 class="text-xl font-bold mb-4" id="confirmationTitle">Confirm Action</h3>
+            <p class="text-gray-300 mb-6" id="confirmationMessage">Are you sure you want to proceed?</p>
+            <div class="flex space-x-4">
+                <button onclick="confirmAction()" 
+                    class="flex-1 bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg">
+                    Confirm
+                </button>
+                <button onclick="hideConfirmationModal()" 
+                    class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-lg">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal Management
+        function showCreateUserModal() {
+            document.getElementById('createUserModal').classList.remove('hidden');
+        }
+
+        function hideCreateUserModal() {
+            document.getElementById('createUserModal').classList.remove('hidden');
+        }
+
+        // Confirmation Dialog Management
+        let currentAction = null;
+        let currentUserId = null;
+
+        function showConfirmationModal(title, message, action, userId) {
+            document.getElementById('confirmationTitle').textContent = title;
+            document.getElementById('confirmationMessage').textContent = message;
+            document.getElementById('confirmationModal').classList.remove('hidden');
+            currentAction = action;
+            currentUserId = userId;
+        }
+
+        function hideConfirmationModal() {
+            document.getElementById('confirmationModal').classList.add('hidden');
+            currentAction = null;
+            currentUserId = null;
+        }
+
+        function confirmPromote(userId) {
+            showConfirmationModal(
+                'Promote User',
+                'Are you sure you want to promote this user to Admin?',
+                'promote',
+                userId
+            );
+        }
+
+        function confirmDemote(userId) {
+            showConfirmationModal(
+                'Demote User',
+                'Are you sure you want to demote this user to regular User?',
+                'demote',
+                userId
+            );
+        }
+
+        function confirmDeactivate(userId) {
+            showConfirmationModal(
+                'Deactivate User',
+                'Are you sure you want to deactivate this user?',
+                'deactivate',
+                userId
+            );
+        }
+
+        function confirmDelete(userId) {
+            showConfirmationModal(
+                'Delete User',
+                'Are you sure you want to permanently delete this user?',
+                'delete',
+                userId
+            );
+        }
+
+        function confirmAction() {
+            // Here you would typically make an API call to your backend
+            console.log(`Performing ${currentAction} on user ${currentUserId}`);
+            hideConfirmationModal();
+        }
+
+        // Form Submission
+        document.getElementById('createUserForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            // Here you would typically make an API call to your backend
+            hideCreateUserModal();
+        });
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            themeToggle.textContent = document.documentElement.classList.contains('dark') ? '🌙' : '☀️';
+        });
+    </script>
+</body>
+</html>

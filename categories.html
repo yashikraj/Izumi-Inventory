@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories - Izumi Inventory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #111827;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gray-800">
+            <nav class="p-6">
+                <h2 class="text-xl font-bold mb-6">Izumi Inventory</h2>
+                <ul class="space-y-3">
+                    <li><a href="dashboard.html" class="block p-2 rounded hover:bg-gray-700">Dashboard</a></li>
+                    <li><a href="inventory.html" class="block p-2 rounded hover:bg-gray-700">Inventory</a></li>
+                    <li><a href="products.html" class="block p-2 rounded hover:bg-gray-700">Products</a></li>
+                    <li><a href="categories.html" class="block p-2 rounded bg-blue-600">Categories</a></li>
+                    <li><a href="settings.html" class="block p-2 rounded hover:bg-gray-700">Settings</a></li>
+                    <li><a href="index.html" class="text-red-400 block p-2 rounded hover:bg-gray-700 mt-8">Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-bold">Categories</h1>
+                <button class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg">Add New Category</button>
+            </div>
+            
+            <!-- Categories Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Category Card -->
+                <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-xl font-bold">Electronics</h3>
+                        <div>
+                            <button class="text-blue-400 hover:text-blue-300 mr-2">Edit</button>
+                            <button class="text-red-400 hover:text-red-300">Delete</button>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 mt-2">Electronic devices and accessories</p>
+                    <div class="mt-4">
+                        <span class="text-sm text-gray-400">Products: </span>
+                        <span class="text-blue-500 font-bold">24</span>
+                    </div>
+                </div>
+                
+                <!-- Category Card -->
+                <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-xl font-bold">Furniture</h3>
+                        <div>
+                            <button class="text-blue-400 hover:text-blue-300 mr-2">Edit</button>
+                            <button class="text-red-400 hover:text-red-300">Delete</button>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 mt-2">Office furniture and equipment</p>
+                    <div class="mt-4">
+                        <span class="text-sm text-gray-400">Products: </span>
+                        <span class="text-blue-500 font-bold">12</span>
+                    </div>
+                </div>
+                
+                <!-- Category Card -->
+                <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-xl font-bold">Accessories</h3>
+                        <div>
+                            <button class="text-blue-400 hover:text-blue-300 mr-2">Edit</button>
+                            <button class="text-red-400 hover:text-red-300">Delete</button>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 mt-2">Computer and office accessories</p>
+                    <div class="mt-4">
+                        <span class="text-sm text-gray-400">Products: </span>
+                        <span class="text-blue-500 font-bold">18</span>
+                    </div>
+                </div>
+                
+                <!-- Category Card -->
+                <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-xl font-bold">Supplies</h3>
+                        <div>
+                            <button class="text-blue-400 hover:text-blue-300 mr-2">Edit</button>
+                            <button class="text-red-400 hover:text-red-300">Delete</button>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 mt-2">Office supplies and consumables</p>
+                    <div class="mt-4">
+                        <span class="text-sm text-gray-400">Products: </span>
+                        <span class="text-blue-500 font-bold">32</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Find and remove these comment lines that are showing on the page -->
+    <!-- Look for text that appears like: -->
+    <!-- // Add this script at the end of your categories.html file, just before the closing tag // Add this script to handle the Save Category button -->
+    
+    <!-- These should be removed from the HTML content that's visible to users -->
+    <script>
+        // Get the Add New Category button
+        const addNewCategoryBtn = document.querySelector('.bg-blue-600');
+        
+        // Get or create the modal
+        let addCategoryModal = document.getElementById('addCategoryModal');
+        
+        if (!addCategoryModal) {
+            const modalHTML = `
+            <div id="addCategoryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+                <div class="bg-gray-800 rounded-xl p-8 max-w-md w-full">
+                    <h2 class="text-2xl font-bold mb-6">Add New Category</h2>
+                    <form id="addCategoryForm">
+                        <div class="mb-4">
+                            <label for="categoryName" class="block text-gray-400 mb-2">Category Name</label>
+                            <input type="text" id="categoryName" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white" required>
+                        </div>
+                        <div class="mb-6">
+                            <label for="categoryDescription" class="block text-gray-400 mb-2">Description</label>
+                            <textarea id="categoryDescription" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white h-24"></textarea>
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="button" id="cancelAddCategory" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg mr-2">Cancel</button>
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">Save Category</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            addCategoryModal = document.getElementById('addCategoryModal');
+        }
+        
+        // Show modal when Add New Category button is clicked
+        addNewCategoryBtn.addEventListener('click', function() {
+            addCategoryModal.classList.remove('hidden');
+        });
+        
+        // Get the cancel button and form
+        const cancelAddCategoryBtn = document.getElementById('cancelAddCategory');
+        const addCategoryForm = document.getElementById('addCategoryForm');
+        
+        // Hide modal when Cancel button is clicked
+        cancelAddCategoryBtn.addEventListener('click', function() {
+            addCategoryModal.classList.add('hidden');
+            addCategoryForm.reset();
+        });
+        
+        // Handle form submission
+        addCategoryForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const newCategory = {
+                name: document.getElementById('categoryName').value.trim(),
+                description: document.getElementById('categoryDescription').value.trim()
+            };
+            
+            try {
+                const response = await fetch('http://localhost:3002/api/categories', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newCategory)
+                });
+    
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to add category');
+                }
+    
+                // Hide modal and reset form
+                addCategoryModal.classList.add('hidden');
+                addCategoryForm.reset();
+                
+                // Reload the page to show the new category
+                window.location.reload();
+            } catch (error) {
+                console.error('Error adding category:', error);
+                alert('Failed to add category: ' + error.message);
+            }
+        });
+    </script>
+    
+    <!-- Find and remove the visible comment text at the bottom of the page -->
+    <!-- Before the closing body tag, remove this line: -->
+    <!-- // Add this script at the end of your categories.html file, just before the closing tag // Add this script to handle the Save Category button -->
+    
+    </body>
+    </html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Izumi Inventory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Top Navigation -->
+    <nav class="fixed top-0 w-full bg-gray-800 border-b border-gray-700 z-50">
+        <div class="max-w-full mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-xl font-bold">Izumi Inventory</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-300">Welcome, Admin</span>
+                    <a href="index.html" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Layout -->
+    <div class="flex h-screen pt-16">
+        <!-- Sidebar -->
+        <!-- Update the sidebar navigation -->
+        <aside class="w-64 fixed h-full bg-gray-800 border-r border-gray-700">
+            <nav class="mt-5 px-2">
+                <ul class="space-y-2">
+                    <li><a href="dashboard.html" class="block p-2 rounded hover:bg-gray-700">Dashboard</a></li>
+                    <li><a href="inventory.html" class="block p-2 rounded hover:bg-gray-700">Inventory</a></li>
+                    <li><a href="products.html" class="block p-2 rounded hover:bg-gray-700">Products</a></li>
+                    <li><a href="categories.html" class="block p-2 rounded hover:bg-gray-700">Categories</a></li>
+                    <li><a href="settings.html" class="block p-2 rounded bg-blue-600">Settings</a></li>
+                    <li><a href="index.html" class="text-red-400 block p-2 rounded hover:bg-gray-700 mt-8">Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <!-- Add a notification system after the main content div -->
+        <div id="notification" class="fixed bottom-4 right-4 px-6 py-3 rounded-lg text-white transform transition-transform duration-300 translate-y-24" style="z-index: 1000;"></div>
+
+        <!-- Update the script section -->
+        <script>
+            // Theme Management
+            const htmlElement = document.documentElement;
+            const themeInputs = document.querySelectorAll('input[name="theme"]');
+            const applyButton = document.getElementById('applyTheme');
+            const resetButton = document.getElementById('resetSettings');
+            const themePreview = document.getElementById('themePreview');
+            const notification = document.getElementById('notification');
+
+            // Load saved theme from localStorage
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.querySelector(`input[value="${savedTheme}"]`).checked = true;
+            htmlElement.classList.toggle('dark', savedTheme === 'dark');
+            updatePreview(savedTheme);
+
+            // Preview theme changes in real-time
+            themeInputs.forEach(input => {
+                input.addEventListener('change', () => {
+                    updatePreview(input.value);
+                });
+            });
+
+            // Function to update preview
+            function updatePreview(theme) {
+                const isDark = theme === 'dark';
+                themePreview.className = isDark 
+                    ? 'bg-gray-700 rounded-xl p-4'
+                    : 'bg-gray-100 rounded-xl p-4';
+                
+                const header = themePreview.querySelector('span');
+                if (header) {
+                    header.className = isDark 
+                        ? 'font-medium text-white'
+                        : 'font-medium text-gray-900';
+                }
+                
+                const button = themePreview.querySelector('button');
+                if (button) {
+                    button.className = isDark
+                        ? 'px-3 py-1 bg-blue-600 rounded-lg text-sm text-white'
+                        : 'px-3 py-1 bg-blue-600 rounded-lg text-sm text-white';
+                }
+                
+                const divs = themePreview.querySelectorAll('.space-y-2 div');
+                divs.forEach(div => {
+                    div.className = isDark
+                        ? 'h-3 bg-gray-600 rounded ' + div.className.split(' ').pop()
+                        : 'h-3 bg-gray-300 rounded ' + div.className.split(' ').pop();
+                });
+            }
+
+            // Show notification
+            function showNotification(message, type = 'success') {
+                notification.textContent = message;
+                notification.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg text-white transform transition-transform duration-300 ${type === 'success' ? 'bg-green-600' : 'bg-red-600'}`;
+                notification.style.transform = 'translateY(0)';
+                
+                setTimeout(() => {
+                    notification.style.transform = 'translateY(24rem)';
+                }, 3000);
+            }
+
+            // Apply theme with enhanced feedback
+            applyButton.addEventListener('click', () => {
+                const selectedTheme = document.querySelector('input[name="theme"]:checked').value;
+                htmlElement.classList.toggle('dark', selectedTheme === 'dark');
+                localStorage.setItem('theme', selectedTheme);
+                
+                // Apply theme to preview
+                updatePreview(selectedTheme);
+                
+                // Show success notification instead of alert
+                showNotification('Theme applied successfully!');
+            });
+
+            // Reset settings with enhanced feedback
+            resetButton.addEventListener('click', () => {
+                if (confirm('Are you sure you want to reset all settings to default?')) {
+                    localStorage.removeItem('theme');
+                    document.querySelector('input[value="dark"]').checked = true;
+                    htmlElement.classList.add('dark');
+                    
+                    // Update preview to match reset theme
+                    updatePreview('dark');
+                    
+                    // Show success notification
+                    showNotification('Settings reset to default!');
+                }
+            });
+            
+            // Add event listener to apply theme when radio buttons change
+            themeInputs.forEach(input => {
+                input.addEventListener('change', () => {
+                    // Enable the apply button with visual feedback
+                    applyButton.classList.add('animate-pulse');
+                    setTimeout(() => {
+                        applyButton.classList.remove('animate-pulse');
+                    }, 1000);
+                });
+            });
+        </script>
+
+        <!-- Main Content -->
+        <main class="ml-64 flex-1 p-8">
+            <div class="max-w-2xl mx-auto">
+                <h2 class="text-2xl font-bold mb-8">Settings</h2>
+
+                <!-- Appearance Section -->
+                <div class="bg-gray-800 rounded-xl border border-gray-700 p-6 mb-8">
+                    <h3 class="text-lg font-medium mb-6">Appearance</h3>
+                    
+                    <!-- Theme Selection -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-400 mb-4">Theme Mode</label>
+                        <div class="flex space-x-4">
+                            <!-- Light Mode Option -->
+                            <div class="flex-1">
+                                <input type="radio" id="lightMode" name="theme" value="light" class="hidden peer">
+                                <label for="lightMode" 
+                                    class="flex flex-col items-center p-4 bg-white rounded-xl cursor-pointer
+                                    border-2 border-transparent peer-checked:border-blue-500 transition-all">
+                                    <div class="w-full h-24 bg-gray-100 rounded-lg mb-3 flex items-center justify-center">
+                                        <span class="text-2xl">☀️</span>
+                                    </div>
+                                    <span class="text-gray-900 font-medium">Light Mode</span>
+                                </label>
+                            </div>
+                            
+                            <!-- Dark Mode Option -->
+                            <div class="flex-1">
+                                <input type="radio" id="darkMode" name="theme" value="dark" class="hidden peer" checked>
+                                <label for="darkMode" 
+                                    class="flex flex-col items-center p-4 bg-gray-900 rounded-xl cursor-pointer
+                                    border-2 border-transparent peer-checked:border-blue-500 transition-all">
+                                    <div class="w-full h-24 bg-gray-800 rounded-lg mb-3 flex items-center justify-center">
+                                        <span class="text-2xl">🌙</span>
+                                    </div>
+                                    <span class="text-white font-medium">Dark Mode</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Theme Preview -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-400 mb-4">Preview</label>
+                        <div id="themePreview" class="bg-gray-700 rounded-xl p-4">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="font-medium">Sample Header</span>
+                                <button class="px-3 py-1 bg-blue-600 rounded-lg text-sm">Action</button>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="h-3 bg-gray-600 rounded w-3/4"></div>
+                                <div class="h-3 bg-gray-600 rounded w-1/2"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Apply Button -->
+                    <button id="applyTheme" 
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                        Apply Theme
+                    </button>
+                </div>
+
+                <!-- Preferences Section -->
+                <div class="bg-gray-800 rounded-xl border border-gray-700 p-6 mb-8">
+                    <h3 class="text-lg font-medium mb-6">Preferences</h3>
+                    <p class="text-gray-400 text-sm">More preferences will be added in future updates.</p>
+                </div>
+
+                <!-- Reset Button -->
+                <button id="resetSettings" 
+                    class="w-full bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                    Reset to Default Settings
+                </button>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

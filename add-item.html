@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Item - Izumi Inventory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Top Navigation -->
+    <nav class="fixed top-0 w-full bg-gray-800 border-b border-gray-700 z-50">
+        <div class="max-w-full mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-xl font-bold">Izumi Inventory</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-700">
+                        🌙
+                    </button>
+                    <span class="text-gray-300">Welcome, Admin</span>
+                    <a href="index.html" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors">
+                        Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar and Main Content -->
+    <div class="flex h-screen pt-16">
+        <!-- Sidebar -->
+        <aside class="w-64 fixed h-full bg-gray-800 border-r border-gray-700">
+            <nav class="mt-5 px-2">
+                <a href="dashboard.html" class="group flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg">
+                    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="#" class="group flex items-center px-4 py-3 text-blue-500 bg-gray-900 rounded-lg mt-1">
+                    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"/>
+                    </svg>
+                    Add New Item
+                </a>
+                <!-- ... other sidebar items same as dashboard ... -->
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="ml-64 flex-1 p-8">
+            <div class="max-w-2xl mx-auto">
+                <h2 class="text-2xl font-bold mb-6">Add New Item</h2>
+                
+                <!-- Add Item Form -->
+                <form id="addItemForm" class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                    <div class="space-y-6">
+                        <!-- Item Name -->
+                        <div>
+                            <label for="itemName" class="block text-sm font-medium text-gray-300 mb-2">
+                                Item Name *
+                            </label>
+                            <input type="text" id="itemName" name="itemName" required
+                                class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-all"
+                                placeholder="Enter item name">
+                        </div>
+
+                        <!-- Category -->
+                        <div>
+                            <label for="category" class="block text-sm font-medium text-gray-300 mb-2">
+                                Category *
+                            </label>
+                            <select id="category" name="category" required
+                                class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-all">
+                                <option value="">Select category</option>
+                                <option value="electronics">Electronics</option>
+                                <option value="furniture">Furniture</option>
+                                <option value="supplies">Supplies</option>
+                                <option value="equipment">Equipment</option>
+                                <option value="others">Others</option>
+                            </select>
+                        </div>
+
+                        <!-- Quantity and Price Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="quantity" class="block text-sm font-medium text-gray-300 mb-2">
+                                    Quantity *
+                                </label>
+                                <input type="number" id="quantity" name="quantity" required min="0"
+                                    class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-all"
+                                    placeholder="0">
+                            </div>
+                            <div>
+                                <label for="unitPrice" class="block text-sm font-medium text-gray-300 mb-2">
+                                    Unit Price *
+                                </label>
+                                <input type="number" id="unitPrice" name="unitPrice" required min="0" step="0.01"
+                                    class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-all"
+                                    placeholder="0.00">
+                            </div>
+                        </div>
+
+                        <!-- Storage Location -->
+                        <div>
+                            <label for="location" class="block text-sm font-medium text-gray-300 mb-2">
+                                Storage Location *
+                            </label>
+                            <input type="text" id="location" name="location" required
+                                class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-all"
+                                placeholder="Enter storage location">
+                        </div>
+
+                        <!-- Description -->
+                        <div>
+                            <label for="description" class="block text-sm font-medium text-gray-300 mb-2">
+                                Description
+                            </label>
+                            <textarea id="description" name="description" rows="4"
+                                class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-all"
+                                placeholder="Enter item description (optional)"></textarea>
+                        </div>
+
+                        <!-- Success Message -->
+                        <div id="successMessage" class="hidden bg-green-900/50 text-green-400 p-4 rounded-lg">
+                            Item added successfully!
+                        </div>
+
+                        <!-- Error Message -->
+                        <div id="errorMessage" class="hidden bg-red-900/50 text-red-400 p-4 rounded-lg">
+                            Please fill in all required fields.
+                        </div>
+
+                        <!-- Form Buttons -->
+                        <div class="flex space-x-4">
+                            <button type="submit"
+                                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-[1.02]">
+                                Add Item
+                            </button>
+                            <button type="reset"
+                                class="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors">
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Form handling
+        const form = document.getElementById('addItemForm');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Hide any existing messages
+            successMessage.classList.add('hidden');
+            errorMessage.classList.add('hidden');
+
+            // Basic form validation
+            const requiredFields = ['itemName', 'category', 'quantity', 'unitPrice', 'location'];
+            const isValid = requiredFields.every(field => document.getElementById(field).value);
+
+            if (!isValid) {
+                errorMessage.classList.remove('hidden');
+                return;
+            }
+
+            // Collect form data
+            const formData = {
+                itemName: document.getElementById('itemName').value,
+                category: document.getElementById('category').value,
+                quantity: document.getElementById('quantity').value,
+                unitPrice: document.getElementById('unitPrice').value,
+                location: document.getElementById('location').value,
+                description: document.getElementById('description').value
+            };
+
+            try {
+                // Here you would typically make an API call to your backend
+                // For demonstration, we'll simulate a successful submission
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                successMessage.classList.remove('hidden');
+                form.reset();
+            } catch (error) {
+                errorMessage.textContent = 'An error occurred. Please try again.';
+                errorMessage.classList.remove('hidden');
+            }
+        });
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            themeToggle.textContent = document.documentElement.classList.contains('dark') ? '🌙' : '☀️';
+        });
+    </script>
+</body>
+</html>

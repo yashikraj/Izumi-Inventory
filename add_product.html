@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Product</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-2xl font-bold mb-6">Add New Product</h1>
+        
+        <div id="message" class="hidden mb-6 p-4 rounded-lg"></div>
+        
+        <form id="productForm" class="bg-gray-800 p-6 rounded-lg">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="item_name" class="block mb-2">Product Name *</label>
+                    <input type="text" id="item_name" name="item_name" required
+                        class="w-full bg-gray-700 border border-gray-600 rounded-lg text-white px-3 py-2 focus:outline-none focus:border-blue-500">
+                </div>
+                
+                <div>
+                    <label for="category" class="block mb-2">Category *</label>
+                    <input type="text" id="category" name="category" required
+                        class="w-full bg-gray-700 border border-gray-600 rounded-lg text-white px-3 py-2 focus:outline-none focus:border-blue-500">
+                </div>
+                
+                <div>
+                    <label for="quantity" class="block mb-2">Quantity *</label>
+                    <input type="number" id="quantity" name="quantity" min="0" required
+                        class="w-full bg-gray-700 border border-gray-600 rounded-lg text-white px-3 py-2 focus:outline-none focus:border-blue-500">
+                </div>
+                
+                <div>
+                    <label for="unit_price" class="block mb-2">Unit Price (₹) *</label>
+                    <input type="number" id="unit_price" name="unit_price" min="0" step="0.01" required
+                        class="w-full bg-gray-700 border border-gray-600 rounded-lg text-white px-3 py-2 focus:outline-none focus:border-blue-500">
+                </div>
+                
+                <div>
+                    <label for="storage_location" class="block mb-2">Storage Location *</label>
+                    <input type="text" id="storage_location" name="storage_location" required
+                        class="w-full bg-gray-700 border border-gray-600 rounded-lg text-white px-3 py-2 focus:outline-none focus:border-blue-500">
+                </div>
+                
+                <div class="md:col-span-2">
+                    <label for="description" class="block mb-2">Description</label>
+                    <textarea id="description" name="description" rows="4"
+                        class="w-full bg-gray-700 border border-gray-600 rounded-lg text-white px-3 py-2 focus:outline-none focus:border-blue-500"></textarea>
+                </div>
+            </div>
+            
+            <div class="flex justify-between mt-6">
+                <a href="index.html" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg">Cancel</a>
+                <button type="submit" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg">Add Product</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('productForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const formData = {
+                item_name: document.getElementById('item_name').value,
+                category: document.getElementById('category').value,
+                quantity: parseInt(document.getElementById('quantity').value),
+                unit_price: parseFloat(document.getElementById('unit_price').value),
+                storage_location: document.getElementById('storage_location').value,
+                description: document.getElementById('description').value
+            };
+            
+            // Create SQL query string
+            const sqlQuery = `CALL add_new_product(
+                '${formData.item_name.replace(/'/g, "''")}', 
+                '${formData.category.replace(/'/g, "''")}', 
+                ${formData.quantity}, 
+                ${formData.unit_price}, 
+                '${formData.storage_location.replace(/'/g, "''")}', 
+                '${formData.description.replace(/'/g, "''")}'
+            )`;
+            
+            // Store the SQL query in localStorage for execution
+            localStorage.setItem('pendingQuery', sqlQuery);
+            
+            // Show success message
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = 'Product added successfully! Execute the SQL query from localStorage.';
+            messageDiv.classList.remove('hidden', 'bg-red-600');
+            messageDiv.classList.add('bg-green-600');
+            
+            // Reset form
+            this.reset();
+            
+            // For demonstration, show the SQL query that needs to be executed
+            console.log('SQL Query to execute:', sqlQuery);
+        });
+    </script>
+</body>
+</html>

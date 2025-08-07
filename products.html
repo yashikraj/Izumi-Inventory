@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - Izumi Inventory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #111827;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="flex h-screen">
+        <!-- Sidebar remains the same -->
+        <aside class="w-64 bg-gray-800 min-h-screen">
+            <nav class="p-6">
+                <h2 class="text-xl font-bold mb-6">Izumi Inventory</h2>
+                <ul class="space-y-3">
+                    <li><a href="dashboard.html" class="block p-2 rounded hover:bg-gray-700">Dashboard</a></li>
+                    <li><a href="inventory.html" class="block p-2 rounded hover:bg-gray-700">Inventory</a></li>
+                    <li><a href="products.html" class="block p-2 rounded bg-blue-600">Products</a></li>
+                    <li><a href="categories.html" class="block p-2 rounded hover:bg-gray-700">Categories</a></li>
+                    <li><a href="settings.html" class="block p-2 rounded hover:bg-gray-700">Settings</a></li>
+                    <li><a href="index.html" class="text-red-400 block p-2 rounded hover:bg-gray-700 mt-8">Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8 overflow-auto">
+            <!-- Keep only one modal definition and remove the duplicate -->
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-bold">Products</h1>
+                <button id="openAddProductBtn" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg">
+                    Add New Product
+                </button>
+            </div>
+            
+            <!-- Keep this modal and remove the duplicate one further down in the file -->
+            <div id="addProductModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+                <div class="bg-gray-800 p-6 rounded-lg w-full max-w-md">
+                    <h2 class="text-xl font-bold mb-4">Add New Product</h2>
+                    <div class="mb-4">
+                        <label for="productName" class="block mb-1">Product Name</label>
+                        <input type="text" id="productName" class="w-full p-2 bg-gray-700 rounded text-white">
+                    </div>
+                    <div class="mb-4">
+                        <label for="productSku" class="block mb-1">SKU</label>
+                        <input type="text" id="productSku" class="w-full p-2 bg-gray-700 rounded text-white">
+                    </div>
+                    <div class="mb-4">
+                        <label for="productCategory" class="block mb-1">Category</label>
+                        <select id="productCategory" class="w-full p-2 bg-gray-700 rounded text-white">
+                            <option value="">Select Category</option>
+                            <option value="Mobile Phones">Mobile Phones</option>
+                            <option value="Computers">Computers</option>
+                            <option value="Tablets">Tablets</option>
+                            <option value="Audio">Audio</option>
+                            <option value="Accessories">Accessories</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="productPrice" class="block mb-1">Price (USD)</label>
+                        <input type="number" id="productPrice" class="w-full p-2 bg-gray-700 rounded text-white">
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="button" id="cancelAddProduct" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg mr-2">Cancel</button>
+                        <button type="button" id="saveAddProduct" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg">Save</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Update the script section -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const openAddProductBtn = document.getElementById('openAddProductBtn');
+                    const addProductModal = document.getElementById('addProductModal');
+                    const cancelAddProduct = document.getElementById('cancelAddProduct');
+                    const saveAddProduct = document.getElementById('saveAddProduct');
+
+                    // Open modal
+                    openAddProductBtn.onclick = function() {
+                        addProductModal.classList.remove('hidden');
+                    };
+
+                    // Close modal
+                    cancelAddProduct.onclick = function() {
+                        addProductModal.classList.add('hidden');
+                    };
+
+                    // Save product
+                    saveAddProduct.onclick = async function() {
+                        // Get form values
+                        const name = document.getElementById('productName').value.trim();
+                        const sku = document.getElementById('productSku').value.trim();
+                        const category = document.getElementById('productCategory').value;
+                        const price = document.getElementById('productPrice').value.trim();
+                        
+                        // Validate form data
+                        if (!name || !sku || !category || !price) {
+                            alert('Please fill in all fields');
+                            return;
+                        }
+                        
+                        try {
+                            const response = await fetch('http://localhost:3002/api/products', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    name,
+                                    sku,
+                                    category,
+                                    price: parseFloat(price)
+                                })
+                            });
+                            
+                            if (!response.ok) {
+                                throw new Error(`Error: ${response.status}`);
+                            }
+                            
+                            const result = await response.json();
+                            
+                            // Add new product to table
+                            const tbody = document.querySelector('#productsTable tbody');
+                            const row = document.createElement('tr');
+                            row.className = 'border-b border-gray-700';
+                            
+                            const inrPrice = (parseFloat(price) * 83.23).toFixed(2);
+                            
+                            row.innerHTML = `
+                                <td class="py-3 px-4">${name}</td>
+                                <td class="py-3 px-4">${sku}</td>
+                                <td class="py-3 px-4">${category}</td>
+                                <td class="py-3 px-4">₹${inrPrice}</td>
+                                <td class="py-3 px-4">
+                                    <button class="edit-btn text-blue-400 hover:text-blue-300 mr-2">Edit</button>
+                                    <button class="delete-btn text-red-400 hover:text-red-300">Delete</button>
+                                </td>
+                            `;
+                            
+                            tbody.appendChild(row);
+                            
+                            // Clear form and close modal
+                            document.getElementById('productName').value = '';
+                            document.getElementById('productSku').value = '';
+                            document.getElementById('productCategory').value = '';
+                            document.getElementById('productPrice').value = '';
+                            addProductModal.classList.add('hidden');
+                            
+                            alert('Product added successfully!');
+                        } catch (error) {
+                            console.error('Error adding product:', error);
+                            alert('Error adding product: ' + error.message);
+                        }
+                    };
+                });
+            </script>
+
+            <!-- Products Table -->
+            <!-- Update the table body to include hardcoded products -->
+            <table id="productsTable" class="w-full">
+                <thead>
+                    <tr class="bg-gray-800 border-b border-gray-700">
+                        <th class="py-3 px-4 text-left">Product Name</th>
+                        <th class="py-3 px-4 text-left">SKU</th>
+                        <th class="py-3 px-4 text-left">Category</th>
+                        <th class="py-3 px-4 text-left">Price</th>
+                        <th class="py-3 px-4 text-left">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Hardcoded products -->
+                    <tr class="border-b border-gray-700">
+                        <td class="py-3 px-4">iPhone 14 Pro</td>
+                        <td class="py-3 px-4">IP14P-001</td>
+                        <td class="py-3 px-4">Mobile Phones</td>
+                        <td class="py-3 px-4">₹83,229.77</td>
+                        <td class="py-3 px-4">
+                            <button class="edit-btn text-blue-400 hover:text-blue-300 mr-2">Edit</button>
+                            <button class="delete-btn text-red-400 hover:text-red-300">Delete</button>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-700">
+                        <td class="py-3 px-4">Samsung Galaxy S23</td>
+                        <td class="py-3 px-4">SGS23-001</td>
+                        <td class="py-3 px-4">Mobile Phones</td>
+                        <td class="py-3 px-4">₹74,904.77</td>
+                        <td class="py-3 px-4">
+                            <button class="edit-btn text-blue-400 hover:text-blue-300 mr-2">Edit</button>
+                            <button class="delete-btn text-red-400 hover:text-red-300">Delete</button>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-700">
+                        <td class="py-3 px-4">MacBook Pro 14"</td>
+                        <td class="py-3 px-4">MBP14-001</td>
+                        <td class="py-3 px-4">Computers</td>
+                        <td class="py-3 px-4">₹166,452.77</td>
+                        <td class="py-3 px-4">
+                            <button class="edit-btn text-blue-400 hover:text-blue-300 mr-2">Edit</button>
+                            <button class="delete-btn text-red-400 hover:text-red-300">Delete</button>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-700">
+                        <td class="py-3 px-4">AirPods Pro</td>
+                        <td class="py-3 px-4">APP-001</td>
+                        <td class="py-3 px-4">Audio</td>
+                        <td class="py-3 px-4">₹20,806.77</td>
+                        <td class="py-3 px-4">
+                            <button class="edit-btn text-blue-400 hover:text-blue-300 mr-2">Edit</button>
+                            <button class="delete-btn text-red-400 hover:text-red-300">Delete</button>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-700">
+                        <td class="py-3 px-4">iPad Air</td>
+                        <td class="py-3 px-4">IPA-001</td>
+                        <td class="py-3 px-4">Tablets</td>
+                        <td class="py-3 px-4">₹49,937.77</td>
+                        <td class="py-3 px-4">
+                            <button class="edit-btn text-blue-400 hover:text-blue-300 mr-2">Edit</button>
+                            <button class="delete-btn text-red-400 hover:text-red-300">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Update your script section -->
+            <script>
+                // Add debug button functionality
+                // Remove this debug button event listener
+                // document.getElementById('debugBtn').addEventListener('click', async () => {
+                //     try {
+                //         const response = await fetch('http://localhost:3002/api/debug');
+                //         const data = await response.json();
+                //         console.log('Debug data:', data);
+                //         alert(`Database connection: ${data.dbConnection}\nProducts found: ${data.productsCount}`);
+                //     } catch (error) {
+                //         console.error('Debug error:', error);
+                //         alert('Debug error: ' + error.message);
+                //     }
+                // });
+            </script>
+
+            <!-- Add Product Modal -->
+            <!-- Make sure your modal HTML is correct -->
+            <div id="addProductModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+                <div class="bg-gray-800 p-6 rounded-lg w-full max-w-md">
+                    <h2 class="text-xl font-bold mb-4">Add New Product</h2>
+                    <div class="mb-4">
+                        <label for="productName" class="block mb-1">Product Name</label>
+                        <input type="text" id="productName" class="w-full p-2 bg-gray-700 rounded text-white">
+                    </div>
+                    <div class="mb-4">
+                        <label for="productSku" class="block mb-1">SKU</label>
+                        <input type="text" id="productSku" class="w-full p-2 bg-gray-700 rounded text-white">
+                    </div>
+                    <div class="mb-4">
+                        <label for="productCategory" class="block mb-1">Category</label>
+                        <select id="productCategory" class="w-full p-2 bg-gray-700 rounded text-white">
+                            <option value="">Select Category</option>
+                            <option value="Mobile Phones">Mobile Phones</option>
+                            <option value="Computers">Computers</option>
+                            <option value="Tablets">Tablets</option>
+                            <option value="Audio">Audio</option>
+                            <option value="Accessories">Accessories</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="productPrice" class="block mb-1">Price (USD)</label>
+                        <input type="number" id="productPrice" class="w-full p-2 bg-gray-700 rounded text-white">
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="button" id="cancelAddProduct" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg mr-2">Cancel</button>
+                        // Update the save button click handler
+                        document.querySelector('#saveAddProduct').addEventListener('click', async function(e) {
+                            e.preventDefault();
+                            
+                            const productData = {
+                                name: document.querySelector('#productName').value.trim(),
+                                sku: document.querySelector('#productSku').value.trim(),
+                                category: document.querySelector('#productCategory').value,
+                                price: parseFloat(document.querySelector('#productPrice').value)
+                            };
+                        
+                            try {
+                                const response = await fetch('http://localhost:3003/api/products', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify(productData)
+                                });
+                        
+                                if (!response.ok) {
+                                    throw new Error('Failed to add product');
+                                }
+                        
+                                // Close modal and reset form
+                                document.querySelector('#addProductModal').classList.add('hidden');
+                                document.querySelector('#productName').value = '';
+                                document.querySelector('#productSku').value = '';
+                                document.querySelector('#productCategory').value = '';
+                                document.querySelector('#productPrice').value = '';
+                        
+                                // Redirect to inventory page
+                                window.location.href = 'inventory.html';
+                        
+                            } catch (error) {
+                                console.error('Error:', error);
+                                alert('Failed to add product: ' + error.message);
+                            }
+                        });
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delete Product Modal -->
+            <div id="deleteProductModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+                <div class="bg-gray-800 p-6 rounded-lg w-full max-w-md">
+                    <h2 class="text-xl font-bold mb-4">Delete Product</h2>
+                    <p class="mb-6">Are you sure you want to delete this product?</p>
+                    <input type="hidden" id="deleteProductId">
+                    <div class="flex justify-end space-x-4">
+                        <button type="button" id="cancelDeleteProduct" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg">Cancel</button>
+                        <button type="button" id="confirmDeleteProduct" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg">Delete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Single Script Block -->
+            <script>
+                // Modal Elements
+                const addProductModal = document.getElementById('addProductModal');
+                const openAddProductBtn = document.getElementById('openAddProductBtn');
+                const cancelAddProduct = document.getElementById('cancelAddProduct');
+                const saveAddProduct = document.getElementById('saveAddProduct');
+
+                // Open modal event listener
+                openAddProductBtn.addEventListener('click', function() {
+                    console.log('Opening add product modal');
+                    addProductModal.classList.remove('hidden');
+                });
+
+                // Close modal event listener
+                cancelAddProduct.addEventListener('click', function() {
+                    console.log('Closing add product modal');
+                    addProductModal.classList.add('hidden');
+                });
+
+                // Save product event listener
+                // Update the save product event listener
+                // Replace the saveAddProduct event listener with this corrected version
+                // Update the save button click handler
+                saveAddProduct.addEventListener('click', async function() {
+                    const name = document.getElementById('productName').value.trim();
+                    const sku = document.getElementById('productSku').value.trim();
+                    const category = document.getElementById('productCategory').value;
+                    const price = document.getElementById('productPrice').value.trim();
+                    
+                    if (!name || !sku || !category || !price) {
+                        alert('Please fill in all fields');
+                        return;
+                    }
+                    
+                    try {
+                        const response = await fetch('http://localhost:3003/api/products', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                name,
+                                sku,
+                                category,
+                                price: parseFloat(price)
+                            })
+                        });
+                
+                        if (!response.ok) {
+                            throw new Error('Failed to add product');
+                        }
+                
+                        // Close the modal
+                        addProductModal.classList.add('hidden');
+                        
+                        // Clear form fields
+                        document.getElementById('productName').value = '';
+                        document.getElementById('productSku').value = '';
+                        document.getElementById('productCategory').value = '';
+                        document.getElementById('productPrice').value = '';
+                        
+                        // Redirect to inventory page to see the new product
+                        window.location.href = 'inventory.html';
+                        
+                    } catch (error) {
+                        console.error('Error adding product:', error);
+                        alert('Error: ' + error.message);
+                    }
+                });
+                
+
+
+        

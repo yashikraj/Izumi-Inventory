@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Izumi Inventory - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #111827;
+            color: white;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center">
+    <div class="bg-gray-800 p-8 rounded-xl shadow-xl w-96 border border-gray-700">
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold">Izumi Inventory</h1>
+            <p class="text-gray-400 mt-2">Login to your account</p>
+        </div>
+
+        <div class="space-y-6">
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-400">Email</label>
+                <input type="email" id="email" name="email" 
+                    class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-400">Password</label>
+                <input type="password" id="password" name="password" 
+                    class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+            </div>
+
+            <div id="errorMessage" class="text-red-500 text-sm hidden"></div>
+
+            <button id="loginButton" 
+                class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Sign in
+            </button>
+            
+            <!-- Admin Login Option -->
+            <div class="text-center mt-4">
+                <button id="adminLoginToggle" class="text-sm text-gray-400 hover:text-blue-500">
+                    Login as Administrator
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add this before your other scripts -->
+    <script src="database.js"></script>
+    <script>
+        document.getElementById('loginButton').addEventListener('click', function() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Clear previous error
+            errorMessage.classList.add('hidden');
+            
+            // Check credentials
+            if (email === 'admin@izumi.com' && password === 'password') {
+                // Success - redirect to dashboard
+                window.location.href = 'dashboard.html';
+            } else {
+                // Show error
+                errorMessage.textContent = 'Invalid email or password';
+                errorMessage.classList.remove('hidden');
+            }
+        });
+        
+        // Admin login toggle
+        document.getElementById('adminLoginToggle').addEventListener('click', function() {
+            const emailInput = document.getElementById('email');
+            const loginTitle = document.querySelector('h1');
+            const loginSubtitle = document.querySelector('p.text-gray-400');
+            const adminToggle = document.getElementById('adminLoginToggle');
+            
+            if (adminToggle.textContent.includes('Administrator')) {
+                // Switch to admin login
+                emailInput.value = 'admin@izumi.com';
+                loginTitle.textContent = 'Admin Login';
+                loginSubtitle.textContent = 'Login to admin dashboard';
+                adminToggle.textContent = 'Back to Regular Login';
+            } else {
+                // Switch back to regular login
+                emailInput.value = '';
+                loginTitle.textContent = 'Izumi Inventory';
+                loginSubtitle.textContent = 'Login to your account';
+                adminToggle.textContent = 'Login as Administrator';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Tracking - Izumi Inventory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Top Navigation -->
+    <nav class="fixed top-0 w-full bg-gray-800 border-b border-gray-700 z-50">
+        <div class="max-w-full mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-xl font-bold">Izumi Inventory</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-700">🌙</button>
+                    <span class="text-gray-300">Welcome, Admin</span>
+                    <a href="index.html" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Layout -->
+    <div class="flex h-screen pt-16">
+        <!-- Sidebar -->
+        <aside class="w-64 fixed h-full bg-gray-800 border-r border-gray-700">
+            <nav class="mt-5 px-2">
+                <!-- Sidebar items -->
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="ml-64 flex-1 p-8">
+            <div class="max-w-full mx-auto">
+                <h2 class="text-2xl font-bold mb-6">Stock Tracking</h2>
+
+                <!-- Filters Section -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Date Range</label>
+                        <select class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white">
+                            <option value="today">Today</option>
+                            <option value="week">Last 7 Days</option>
+                            <option value="month">Last 30 Days</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Item Filter</label>
+                        <select class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white">
+                            <option value="">All Items</option>
+                            <option value="1">Dell XPS 13 Laptop</option>
+                            <option value="2">Office Chair</option>
+                        </select>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
+                        <label class="block text-sm font-medium text-gray-400 mb-2">User Filter</label>
+                        <select class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white">
+                            <option value="">All Users</option>
+                            <option value="admin">Admin</option>
+                            <option value="user1">John Doe</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Stock Level Chart -->
+                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 mb-8">
+                    <h3 class="text-lg font-medium mb-4">Stock Level Trends</h3>
+                    <canvas id="stockTrendChart" height="100"></canvas>
+                </div>
+
+                <!-- Stock Changes Table -->
+                <div class="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-700">
+                            <thead class="bg-gray-900">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">Date & Time</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">Item Name</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">Action</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">Quantity Changed</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">Current Stock</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">Handled By</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-gray-800 divide-y divide-gray-700">
+                                <!-- Sample Rows -->
+                                <tr class="hover:bg-gray-700 transition-colors">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">2024-01-20 14:30</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">Dell XPS 13 Laptop</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-900 text-green-400">Added</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-400">+5</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">Admin</td>
+                                </tr>
+                                <tr class="hover:bg-gray-700 transition-colors">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">2024-01-20 12:15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">Office Chair</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 py-1 text-xs font-medium rounded-full bg-red-900 text-red-400">Removed</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-red-400">-2</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">8</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">John Doe</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="bg-gray-900 px-6 py-4 border-t border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-gray-400">
+                                Showing <span class="font-medium">1</span> to <span class="font-medium">10</span> of <span class="font-medium">25</span> changes
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="px-3 py-1 rounded bg-gray-700 text-gray-300 hover:bg-gray-600">Previous</button>
+                                <button class="px-3 py-1 rounded bg-blue-600 text-white">1</button>
+                                <button class="px-3 py-1 rounded bg-gray-700 text-gray-300 hover:bg-gray-600">2</button>
+                                <button class="px-3 py-1 rounded bg-gray-700 text-gray-300 hover:bg-gray-600">3</button>
+                                <button class="px-3 py-1 rounded bg-gray-700 text-gray-300 hover:bg-gray-600">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Initialize Chart
+        const ctx = document.getElementById('stockTrendChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan 15', 'Jan 16', 'Jan 17', 'Jan 18', 'Jan 19', 'Jan 20'],
+                datasets: [{
+                    label: 'Dell XPS 13 Laptop',
+                    data: [10, 12, 8, 15, 10, 15],
+                    borderColor: '#3b82f6',
+                    tension: 0.4
+                }, {
+                    label: 'Office Chair',
+                    data: [5, 8, 12, 10, 8, 8],
+                    borderColor: '#10b981',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: '#fff'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: '#374151'
+                        },
+                        ticks: {
+                            color: '#9ca3af'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: '#374151'
+                        },
+                        ticks: {
+                            color: '#9ca3af'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            themeToggle.textContent = document.documentElement.classList.contains('dark') ? '🌙' : '☀️';
+        });
+    </script>
+</body>
+</html>
